@@ -15,27 +15,24 @@ public class Main {
 
     Scanner scanner = new Scanner(System.in);
     List<Student> studentsList = new ArrayList<>();
+    int choiceNum = 0;
 
     while (true) {
-
-      int choiceNum = 0;
       System.out.println("1.学生を追加");
       System.out.println("2.学生を削除");
       System.out.println("3.点数を更新");
       System.out.println("4.平均点を計算");
       System.out.println("5.全学生の情報を表示");
       System.out.println("6.終了");
+      System.out.println("選択してください");
 
-      while (true) {
-        try {
-          System.out.println("選択してください");
-          choiceNum = scanner.nextInt();
-          scanner.nextLine();
-          break;//１〜６が入力されたらループ終了
-        } catch (Exception e) {
-          System.out.println("無効な入力です。1〜６の数字を選択してください");
-          scanner.nextLine();
-        }
+      try {
+        choiceNum = scanner.nextInt();
+        scanner.nextLine();
+      } catch (Exception e) {
+        System.out.println("無効な入力です。1〜６の数字を選択してください");
+        scanner.nextLine();
+        continue;
       }
 
       switch (choiceNum) {
@@ -44,6 +41,10 @@ public class Main {
             try {
               System.out.println("追加する学生の名前を入力してください:");
               String name = scanner.nextLine();
+              if (name.isEmpty()) {
+                System.out.println("名前を入力してください(空欄を無効です)");
+                continue;
+              }
 
               System.out.println(name + "の点数を入力してください:");
               int score = scanner.nextInt();
@@ -53,6 +54,7 @@ public class Main {
               studentsList.add(student);
               System.out.println(name + "さん、" + score + "点を追加しました");
               break;//正しい入力がされるまでループ。正しく入力されたら抜ける
+
 
             } catch (Exception e) {
               System.out.println("無効な入力です。最初からやり直してください。");
@@ -77,38 +79,46 @@ public class Main {
 
           if (!foundInCase2) {
             System.out.println(
-                nameToRemove + "さんは見つかりませんでした。入力をもう一度確認してください");
-            System.out.println(studentsList);
+                nameToRemove + "さんは見つかりませんでした。最初から入力してください");
+            System.out.println("登録生徒" + studentsList);
           }
           break;//２の処理を終了
 
         case 3://点数の更新
-          System.out.println("点数を更新する生徒を入力してください");
-          String upDateName = scanner.nextLine();
-          boolean foundInCase3 = false;
-
+          System.out.println("登録生徒は以下の通りです");
           for (Student student : studentsList) {
+            System.out.println(student.getName());
+          }
+
+          boolean foundCase3 = false;
+
+          System.out.println("更新する生徒を入力してください");
+          String upDateName = scanner.nextLine();
+
+          for (Student student : studentsList) {  //studentListを検索し一致したあとも続くループ
             if (student.getName().equals(upDateName)) {
               System.out.println("新しい点数を入力してください");
-            }
-            while (true) {
-              try {
-                int newScore = scanner.nextInt();
-                scanner.nextLine();
-                student.setScore(newScore);
-                System.out.println(upDateName + "さんの点数を" + newScore + "に更新しました");
-                foundInCase3 = true;
-                break;//正しい入力がされたらループ終了
-              } catch (Exception e) {
-                System.out.println("点数の入力が不正です.");
-                scanner.nextLine();
+
+              while (true) {
+                try {
+                  int newScore = scanner.nextInt();
+                  scanner.nextLine();
+                  student.setScore(newScore);
+                  System.out.println(upDateName + "さんの点数を更新しました");
+                  foundCase3 = true;
+                  break;//点数が正常入力ループを抜ける
+                } catch (Exception e) {
+                  System.out.println("点数の入力が不正です。点数を入力してください");
+                  scanner.nextLine();
+                }
               }
+              break;
             }
           }
-          if (!foundInCase3) {
-            System.out.println("入力された生徒はいません。最初からやり直してください");
-            scanner.nextLine();
+          if (!foundCase3) {
+            System.out.println(upDateName + "さんは登録されていません。最初から選択してください");
           }
+          break;
 
         case 4://平均点の算出
           if (studentsList.isEmpty()) {
