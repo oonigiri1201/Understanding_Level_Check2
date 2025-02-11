@@ -2,6 +2,7 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 //配列とリストまたはStreamAPIを使用して、
@@ -55,7 +56,6 @@ public class Main {
               System.out.println(name + "さん、" + score + "点を追加しました");
               break;//正しい入力がされるまでループ。正しく入力されたら抜ける
 
-
             } catch (Exception e) {
               System.out.println("無効な入力です。最初からやり直してください。");
               scanner.nextLine();
@@ -64,23 +64,16 @@ public class Main {
           break;//１の処理が完了
 
         case 2://学生の削除
-          //見つかったらtrueにするため一度falseをデフォルトにする
-          boolean foundInCase2 = false;
 
           System.out.println("削除したい学生の名前を入力してください");
           String nameToRemove = scanner.nextLine();
-          for (Student student : studentsList) {
-            if (student.getName().equals(nameToRemove)) {
-              System.out.println(nameToRemove + "さんを削除しました");
-              foundInCase2 = true;
-            }
-            break;//削除した時点でループを抜ける
-          }
 
-          if (!foundInCase2) {
-            System.out.println(
-                nameToRemove + "さんは見つかりませんでした。最初から入力してください");
-            System.out.println("登録生徒" + studentsList);
+          boolean remove = studentsList.removeIf(student -> student.getName().equals(nameToRemove));
+
+          if (remove) {
+            System.out.println(nameToRemove + "さんを削除しました");
+          } else {
+            System.out.println(nameToRemove + "さんは登録されていません");
           }
           break;//２の処理を終了
 
@@ -90,34 +83,25 @@ public class Main {
             System.out.println(student.getName());
           }
 
-          boolean foundCase3 = false;
-
           System.out.println("更新する生徒を入力してください");
-          String upDateName = scanner.nextLine();
+          String updateName = scanner.nextLine();
 
-          for (Student student : studentsList) {  //studentListを検索し一致したあとも続くループ
-            if (student.getName().equals(upDateName)) {
-              System.out.println("新しい点数を入力してください");
+          Optional<Student> studentToUpdate = studentsList.stream()
+              .filter(student -> student.getName().equals(updateName))
+              .findFirst();
 
-              while (true) {
+          studentToUpdate.ifPresentOrElse(student -> {
+                System.out.println("新しい点数を入力してください");
                 try {
                   int newScore = scanner.nextInt();
                   scanner.nextLine();
                   student.setScore(newScore);
-                  System.out.println(upDateName + "さんの点数を更新しました");
-                  foundCase3 = true;
-                  break;//点数が正常入力ループを抜ける
+                  System.out.println(updateName + "さんの点数を更新しました");
                 } catch (Exception e) {
-                  System.out.println("点数の入力が不正です。点数を入力してください");
-                  scanner.nextLine();
+                  System.out.println("無効な入力です");
                 }
-              }
-              break;
-            }
-          }
-          if (!foundCase3) {
-            System.out.println(upDateName + "さんは登録されていません。最初から選択してください");
-          }
+              }, () -> System.out.println("登録された生徒はいません。もう一度選択してください"));
+
           break;
 
         case 4://平均点の算出
