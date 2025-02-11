@@ -98,7 +98,8 @@ public class Main {
                   student.setScore(newScore);
                   System.out.println(updateName + "さんの点数を更新しました");
                 } catch (Exception e) {
-                  System.out.println("無効な入力です");
+                  System.out.println("無効な入力です。最初からやり直してください。");
+                  scanner.nextLine();
                 }
               }, () -> System.out.println("登録された生徒はいません。もう一度選択してください"));
 
