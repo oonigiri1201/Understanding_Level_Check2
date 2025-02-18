@@ -68,9 +68,9 @@ public class Main {
           System.out.println("削除したい学生の名前を入力してください");
           String nameToRemove = scanner.nextLine();
 
-          boolean remove = studentsList.removeIf(student -> student.getName().equals(nameToRemove));
+          boolean isRemoved = studentsList.removeIf(student -> student.getName().equals(nameToRemove));
 
-          if (remove) {
+          if (isRemoved) {
             System.out.println(nameToRemove + "さんを削除しました");
           } else {
             System.out.println(nameToRemove + "さんは登録されていません");
